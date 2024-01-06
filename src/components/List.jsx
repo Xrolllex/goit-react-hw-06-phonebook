@@ -1,28 +1,46 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import Contact from './Contact';
+import { useSelector, useDispatch } from 'react-redux';
+import { actions } from '../redux/store';
+import ContactItem from './Contact';
 
-const List = ({ contacts, onDeleteContact }) => (
-  <ul>
-    {contacts.map(contact => (
-      <Contact
-        key={contact.id}
-        contact={contact}
-        onDelete={() => onDeleteContact(contact.id)}
-      />
-    ))}
-  </ul>
-);
+const { deleteContact, updateFilter } = actions;
 
-List.propTypes = {
-  contacts: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
-    })
-  ).isRequired,
-  onDeleteContact: PropTypes.func.isRequired,
+const ContactList = () => {
+  const contacts = useSelector(state => state.contacts);
+  const filter = useSelector(state => state.filter);
+  const dispatch = useDispatch();
+
+  const handleChange = event => {
+    dispatch(updateFilter(event.target.value));
+  };
+
+  const filteredContacts = contacts.filter(contact => 
+    contact.name.toLowerCase().includes(filter.toLowerCase())
+  );
+
+  return (
+    <>
+      <label htmlFor="filterInput">
+        Find contacts by name
+        <input
+          id="filterInput"
+          className="input"
+          type="text"
+          value={filter}
+          onChange={handleChange}
+        />
+      </label>
+      <ul>
+        {filteredContacts.map(contact => (
+          <ContactItem
+            key={contact.id}
+            contact={contact}
+            onDelete={() => dispatch(deleteContact(contact.id))}
+          />
+        ))}
+      </ul>
+    </>
+  );
 };
 
-export default List;
+export default ContactList;

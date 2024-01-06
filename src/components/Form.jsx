@@ -1,66 +1,60 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { actions } from '../redux/store';
+import { nanoid } from 'nanoid';
 
-class Form extends Component {
-  state = {
-    name: '',
-    number: ''
-  }
+const { addContact } = actions;
 
-  handleInputChange = event => {
+const ContactForm = () => {
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
+  const dispatch = useDispatch();
+
+  const handleInputChange = event => {
     const { name, value } = event.currentTarget;
-    this.setState({ [name]: value });
+    if (name === 'name') setName(value);
+    if (name === 'number') setNumber(value);
   };
 
-  handleSubmit = event => {
+  const handleSubmit = event => {
     event.preventDefault();
-    const { name, number } = this.state;
-    this.props.onSubmit({ name, number });
-    this.setState({ name: '', number: '' });
+    dispatch(addContact({ id: nanoid(), name, number }));
+    setName('');
+    setNumber('');
   };
 
-  render() {
-    const { name, number } = this.state;
-
-    return (
-      <form className="form" onSubmit={this.handleSubmit}>
+  return (
+    <>
+      <form onSubmit={handleSubmit}>
+        
         <label>
           Name
           <input
-            className="name-input"
             type="text"
             name="name"
-            
-            pattern="[A-Za-z '-]+"
-            title="Name may contain only letters, apostrophe, dash and spaces."
-            required
             value={name}
-            onChange={this.handleInputChange}
+            onChange={handleInputChange}
+            required
           />
         </label>
 
+        
         <label>
           Number
           <input
-            className="number-input"
-            type="tel"
+            type="text"
             name="number"
-            
-            pattern="[0-9 +-]+"
-            title="Phone number must be digits and can contain spaces, dashes, and plus."
-            required
             value={number}
-            onChange={this.handleInputChange}
+            onChange={handleInputChange}
+            required
           />
         </label>
+
+        
         <button type="submit">Add contact</button>
       </form>
-    );
-  }
-}
-
-Form.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
+    </>
+  );
 };
 
-export default Form;
+export default ContactForm;

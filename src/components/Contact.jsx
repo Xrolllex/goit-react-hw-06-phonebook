@@ -1,15 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-
-const Contact = ({ contact, onDelete }) => (
-  <li>
+const ContactItem = ({ contact, onDelete }) => (
+  <li className="contact-item">
     {contact.name}: {contact.number}
-    <button onClick={onDelete}>Delete</button>
+    <button className="button-del" onClick={onDelete}>Delete</button>
   </li>
 );
 
-Contact.propTypes = {
+ContactItem.propTypes = {
   contact: PropTypes.shape({
     name: PropTypes.string.isRequired,
     number: PropTypes.string.isRequired,
@@ -17,4 +16,4 @@ Contact.propTypes = {
   onDelete: PropTypes.func.isRequired,
 };
 
-export default Contact;
+export default ContactItem;
